@@ -10,7 +10,7 @@ const spanBalance = document.getElementById("amount-balance");
 const incomeList = document.getElementById("income-list");
 const expensList = document.getElementById("expens-list");
 
-const objectArray = [];
+const budgetArray = [];
 const income = "income";
 const expens = "expens";
 let balanceAmount = 0;
@@ -39,10 +39,11 @@ function emptyInputs(item) {
   } else if (item === expens && inputExpensAmount.value <= 0) {
     alert("wpisz wartość wydatku większą od zera");
   } else {
-    createObj(item);
+    createBudgetItem(item);
     clearInputs(item);
   }
 }
+
 function clearInputs(item) {
   if (item === income) {
     inputIncomeTitle.value = "";
@@ -52,77 +53,89 @@ function clearInputs(item) {
     inputExpensAmount.value = "";
   }
 }
- function totalBalance() {
-    balanceAmount = objectArray.reduce((acc, prev) => {
-      if (prev.type === income) {
-        return acc + prev.amount;
-      }
-      if (prev.type === expens) {
-        return acc - prev.amount;
-      }
-      return acc;
-    }, 0);
-}
-  
- function sumIncomes() {
-    totalIncome = objectArray.reduce((acc, prev) => {
-      if (prev.type === income) {
-        return acc + prev.amount;
-      }
-      if (prev.type === expens) {
-        return acc;
-      }
-    }, 0);
-}
-    function sumExpenses() {
-    totalExpens = objectArray.reduce((acc, prev) => {
-      if (prev.type === expens) {
-        return acc + prev.amount;
-      }
-      if (prev.type === income) {
-        return acc;
-      }
-    }, 0);
-}
-  
-function displayAmount() {
-    paragraphExpens.innerHTML = totalExpens;
-    paragraphIncome.innerHTML = totalIncome;
-    spanBalance.innerHTML = balanceAmount;
-}
-  
 
-function createObj(item) {
-  let obj = {
+function totalBalance() {
+  balanceAmount = budgetArray.reduce((sum, item) => {
+        if (item.type === income) {
+      return sum + item.amount;
+    }
+    if (item.type === expens) {
+      return sum - item.amount;      
+    }          
+  }, 0);      
+};
+
+function sumIncomes() {
+  totalIncome = budgetArray.reduce((sum, item) => {
+    if (item.type === income) {
+      return sum + item.amount;
+    }
+    if (item.type === expens) {
+      return sum;
+    }  
+  }, 0);
+}
+
+function sumExpenses() {
+  totalExpens = budgetArray.reduce((sum, item) => {
+    if (item.type === expens) {
+      return sum + item.amount;
+    }
+    if (item.type === income) {
+      return sum;
+    }
+  }, 0);
+}
+
+function displayAmount() {
+  paragraphExpens.innerHTML = totalExpens;
+  paragraphIncome.innerHTML = totalIncome;
+  spanBalance.innerHTML = balanceAmount;
+}
+
+function removeInput(li, budgetItem) {
+  li.remove();
+  const indexToRemove = budgetArray.findIndex((item) => item.id === budgetItem.id);
+  budgetArray.splice(indexToRemove, 1);
+  sumIncomes();
+  sumExpenses();
+  totalBalance();
+  displayAmount();
+  balance();
+      }
+
+function createBudgetItem(item) {
+  let budgetItem = {
     id: Math.random(),
     name: "",
     amount: 0,
     type: item,
   };
-  objectArray.push(obj);  
-  function objectValues() {
-    if (obj.type === income) {
-      obj.name = inputIncomeTitle.value;
-      obj.amount = Number(inputIncomeAmount.value);
+  budgetArray.push(budgetItem);
+  function budgetValues() {
+    if (budgetItem.type === income) {
+      budgetItem.name = inputIncomeTitle.value;
+      budgetItem.amount = Number(inputIncomeAmount.value);
     }
-    if (obj.type === expens) {
-      obj.name = inputExpensTitle.value;
-      obj.amount = Number(inputExpensAmount.value);
+    if (budgetItem.type === expens) {
+      budgetItem.name = inputExpensTitle.value;
+      budgetItem.amount = Number(inputExpensAmount.value);
     }
   }
-  objectValues();
-  totalBalance(); 
-  sumIncomes(); 
+  budgetValues();
+  totalBalance();
+  sumIncomes();
   sumExpenses();
-  displayAmount();  
+  displayAmount();
   balance();
   const li = document.createElement("li");
   addList();
+  
   function addList() {
-    if (obj.type === expens) {
+    if (budgetItem.type === expens) {
       expensList.appendChild(li);
     }
-    if (obj.type === income) {
+    if (budgetItem.type === income) {
       incomeList.appendChild(li);
     }
   }
@@ -159,15 +172,15 @@ function createObj(item) {
   buttonSave.hidden = true;
   spanValue();
   function spanValue() {
-    if (obj.type === expens) {
+    if (budgetItem.type === expens) {
       spanIncome.innerHTML = `${inputExpensTitle.value} ${inputExpensAmount.value}`;
     }
-    if (obj.type === income) {
+    if (budgetItem.type === income) {
       spanIncome.innerHTML = `${inputIncomeTitle.value} ${inputIncomeAmount.value}`;
     }
   }
   buttonEdit.addEventListener("click", () => {
-    const result = objectArray.filter((item) => item.id === obj.id);
+    const result = budgetArray.filter((item) => item.id === budgetItem.id);
     editInputTitle.value = result[0].name;
     editInputAmount.value = result[0].amount;
     editInputTitle.hidden = false;
@@ -177,14 +190,14 @@ function createObj(item) {
     spanIncome.hidden = true;
   });
   buttonSave.addEventListener("click", () => {
-    if (obj.type === income && editInputTitle.value === "") {
-      alert("w polu edycji wpisz nazwę przychodu");
-    } else if (obj.type === income && editInputAmount.value <= 0) {
-      alert(" w polu edycji przychodu wpisz kwotę większą od zera");
-    } else if (obj.type === expens && editInputTitle.value === "") {
-      alert(" w polu edycji wpisz nazwę wydatków");
-    } else if (obj.type === expens && editInputAmount.value <= 0) {
-      alert(" w polu edycji wydatków wpisz kwotę większą od zera");
+    if (budgetItem.type === income && editInputTitle.value === "") {
+      alert(" wpisz nazwę przychodu w polu edycji");
+    } else if (budgetItem.type === income && editInputAmount.value <= 0) {
+      alert(" wpisz kwotę większą od zera w polu edycji przychodu ");
+    } else if (budgetItem.type === expens && editInputTitle.value === "") {
+      alert(" wpisz nazwę wydatków w polu edycji ");
+    } else if (budgetItem.type === expens && editInputAmount.value <= 0) {
+      alert("  wpisz kwotę większą od zera w polu edycji wydatków");
     } else {
       buttonSave.hidden = true;
       buttonEdit.hidden = false;
@@ -193,9 +206,9 @@ function createObj(item) {
       editInputAmount.hidden = true;
       spanIncome.hidden = false;
       spanIncome.innerHTML =
-      editInputTitle.value + " " + editInputAmount.value + " " + "PLN";
-      obj.name = editInputTitle.value;
-      obj.amount = parseInt(editInputAmount.value);
+        editInputTitle.value + " " + editInputAmount.value + " " + "PLN";
+      budgetItem.name = editInputTitle.value;
+      budgetItem.amount = parseInt(editInputAmount.value);
       sumIncomes();
       sumExpenses();
       totalBalance();
@@ -203,14 +216,10 @@ function createObj(item) {
       balance();
     }
   });
-  buttonRemove.addEventListener("click", () => {
-    li.remove();
-    const indexToRemove = objectArray.findIndex((item) => item.id === obj.id);
-    objectArray.splice(indexToRemove, 1);
-    sumIncomes();
-    sumExpenses();
-    totalBalance();
-    displayAmount();
-    balance();
-  });
+  
+  buttonRemove.addEventListener("click", ()=>removeInput(li,budgetItem))
+      
 }
+
+  
+

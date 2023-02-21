@@ -1,19 +1,8 @@
-* {
-  box-sizing: border-box;
-  margin: 0 auto;
-}
 
-body {
-  width: 100vw;
-  height: 100vh;
-}
 .main-container {
-
   background-size: cover;
-  box-sizing: border-box;
   margin: 0 auto;
-  width: 100%;
-  height: 100%;
+
 }
 .container {
   margin: 0 auto;
@@ -21,37 +10,27 @@ body {
   height: 100%;
 }
 .wrapper {
-  width: 100%;
-  height: 100%;
   padding-top: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+}   
 
 .container-income-expenses {
   display: flex;
   justify-content: space-between;
-  width: 100%;
-}
-
-
-.income-title,
-.income-amount {
-  text-align: center;
- 
-  padding: 5px;
-  border-radius: 5px;
   
 }
+
+.income-title,
+.income-amount,
 .expens-title,
 .expens-amount {
   text-align: center;
-  
   padding: 5px;
   border-radius: 5px;
-  
 }
+
 .button {
   padding: 2%;
   border: 2px;
@@ -60,12 +39,9 @@ body {
 }
 .amount-balance {
   display: flex;
-
   font-size: 24px;
   font-weight: 700;
-
   border-radius: 10px;
-
   text-align: center;
   align-items: center;
   margin: 50px 0px;
